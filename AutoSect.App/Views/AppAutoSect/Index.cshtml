@@ -1,0 +1,198 @@
+﻿
+@model IEnumerable<ProjectSetting>
+@{
+    Layout = "_AppLayout";
+}
+   
+
+
+<!-- Upload Modal -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="uploadExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form method="post" enctype="multipart/form-data" id="CreateProjectForm" asp-controller="AppAutoSect" asp-action="CreateProject">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="createNewProjectTitle">Create New Project</h1>
+                <button id="CloseButton" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <div class="mb-3">
+                    <label class="form-label d-inline">Enter Project Name:</label>
+                        <input class="form-control" id="ProjectName" name="ProjectName" required placeholder="Grade 2">
+                </div>
+                <div class="mb-3">
+                    <p id="userStatus" />
+                    <p hidden >Your user: @TempData["project"]</p>
+                </div>
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Select Excel File:</label>
+                    <input class="form-control" name="file" required type="file" id="formFile" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" hidden data-bs-dismiss="modal">Close</button>
+                    <button id="CreateProject" type="submit" class="btn btn-primary" >
+                    Create Project
+                </button>
+            </div>
+        </div>
+        </div> 
+    </form>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="DeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteProject">Confirm Deletion</h1>
+                    <button id="CloseButton" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <span id="DeletionMessage">Are you sure you want to delete <b><span id="modalProjectName"></span></b>  project?</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Cancel</button>
+                    <button id="ConfirmDeleteProject" type="submit" class="btn btn-danger">
+                        Delete Project
+                    </button>
+                </div>
+            </div>
+        </div>
+</div>
+
+<section>
+    <div class="container-fluid">
+        <h1 class="mt-2">Projects</h1><p>(There are <b>@TempData["projectcount"]</b> project(s) in your account)</p>
+        <div class="alert alert-info" role="alert">
+            <b><em>How to start?</em></b> Download our excel file here <a href="home/DownloadAutoSectExcel"><em>AutoSectExcel.xlsx.</em></a>
+            Follow the format. Click the <em>add new students</em> and browse your updated Excel File. Wait until all of the students was imported and the project successfully created!
+        </div>
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                New project <b>@TempData["projectname"]</b> succesfully created!
+            </div>
+        }
+        @if (TempData["DeletedMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                The project <b>@TempData["DeletedProjectName"]</b> deleted successfully!
+            </div>
+        }
+        <div class="row p-2">
+            <div class="col-md-2 m-1 d-flex btn btn-outline-primary text-center" style="cursor:pointer;">
+                <a  data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
+                    <h4 class="align-text-middle"><i class="bi bi-person-add"> </i>Add New Students</h4>
+                </a>
+            </div>
+            @foreach (var p in Model ?? Enumerable.Empty<ProjectSetting>())
+            {
+                <div class="col-md-2 m-1 btn btn-outline-primary text-center" style="cursor:pointer;">
+                    <form asp-action="SubmitToDashBoard" asp-controller="AppAutoSect" method="post">
+                        <h4><i class="bi bi-person-check-fill"> </i>@p.ProjectName</h4>
+                        <p class="card-text"><small class="text-body-secondary"><span class="badge @(p.Status == "Complete" ? "bg-success" : "bg-warning")">Status: @p.Status</span></small></p>
+                        <p hidden class="card-text"><small class="text-body-secondary"><span class="badge @(p.Status == "Complete" ? "bg-success" : "bg-warning")">Method: @p.Method</span></small></p>
+                        <input class="form-control" name="ProjectName" hidden value="@p.ProjectName" />
+                        <input class="form-control" name="ProjectId" hidden value="@p.ProjectId" />
+                        <button type="submit" class="btn btn-dark" title="Go to Dashboard">Go to Dashboard</button>
+                    </form>
+                    <button class="btn btn-danger mt-1" data-bs-toggle="modal" data-bs-target="#DeleteModal" data-projectid="@p.ProjectId" data-projectname="@p.ProjectName" title="Delete Project">Delete Project</button>
+                </div>
+            }
+
+        </div>
+        <h3 hidden>@TempData["boolcheck"]</h3>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        
+        $(document).ready(function () {
+
+            $("#ProjectName").on("input", function () {
+
+                var projectnameval = $("#ProjectName").val();
+                var message = $("#userStatus");
+                    
+                if (projectnameval != "") {
+
+                    message.html("Checking....");
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("CheckUserAvailability", "AppAutoSect")",
+                        data: {
+                            projectname: projectnameval
+                        },
+                        success: function (response) {
+
+                            if (response == 0) {
+                                message.html('<font color="green">Available! You can take it!</font>');
+
+                                console.log(response);
+
+                            }
+                            else {
+                                message.html('<font color="red">Project Name Already Used. Try Another!</font>');
+                                console.log(response);
+                            }
+                        } 
+
+                    });
+                } else {
+                    message.html("");
+                }
+            });
+
+            $("#CreateProject").click(function () {
+
+                $("#CreateProjectForm").submit();
+                $(this).prop("disabled", true);
+                $("#CloseButton").prop("disabled", true);
+
+                // Change the button text
+                var originalText = $(this).html(); // Store the original text
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating Project...');
+
+            });
+
+            $('#DeleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var projectId = button.data('projectid');
+                var projectName = button.data('projectname');
+                var modal = $(this);
+                modal.find('#modalProjectName').text(projectName);
+
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $('#ConfirmDeleteProject').off('click').on('click', function () {
+
+                    alert(projectId);
+
+                    $.ajax({
+                        url: "@Url.Action("DeleteProject", "AppAutoSect")",
+                        type: 'POST',
+                        data: { 
+                            projectId: projectId,
+                            projectName: projectName,
+                            __RequestVerificationToken: token 
+                        },
+                        success: function (result) {
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('An error occured while deleting the project.');
+                        }
+                    });
+
+                });
+
+            });
+
+
+            
+        });
+
+    </script>
+}

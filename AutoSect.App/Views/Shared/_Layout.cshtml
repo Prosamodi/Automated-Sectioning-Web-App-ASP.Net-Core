@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Automated Sectioning</title>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    @* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.css" /> *@
+    <style>
+        label.error{
+            color: red;
+        } 
+        input.error{
+            border: 1px solid red;
+        }
+        input.valid{
+            border:1px solid green;
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary navbar-expand-lg bg-body-tertiary text-white">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-action="index" asp-controller="home">AutoSect</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav text-white" >
+                    <li class="nav-item">
+                        <a class="nav-link @if (ViewBag.ActivePage == "home") { @TempData["ariaActive"] }"
+                           aria-current="page" asp-action="index" asp-controller="home">Home</a>
+                    </li>
+                     @* <li class="nav-item">
+                         <a class="nav-link @if (ViewBag.ActivePage == "aboutus") { @TempData["ariaActive"] }" asp-action="aboutus" asp-controller="home">About Us</a>
+                     </li> *@
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Downloads
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="home/DownloadAutoSectExcel">AutoSect Excel</a></li>
+                            @* <li><a class="dropdown-item" href="#">AutoSect APK</a></li>
+                            <li><a class="dropdown-item" href="#">AutoSect Desktop</a></li> *@
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @if (ViewBag.ActivePage == "contactus") { @TempData["ariaActive"] }" asp-action="contactus" asp-controller="home">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+    </nav>
+    <div>
+        @RenderBody()
+    </div>
+
+    <footer>
+        <h6 class="my-5 text-center">PROSAMODI APPS&copy; 2024</h6>
+    </footer>
+
+    <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/jquery.validate.min.js"></script>
+    <script src="/lib/jquery/additional-methods.min.js"></script>
+    <script src="/lib/jquery/jquery.validate.unobtrusive.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

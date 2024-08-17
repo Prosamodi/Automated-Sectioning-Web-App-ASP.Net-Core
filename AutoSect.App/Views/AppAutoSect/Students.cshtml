@@ -1,0 +1,353 @@
+﻿
+@model StudentsProjectsViewModel
+@{
+    Layout = "_AppLayout";
+    string selectedProject = ViewBag.SelectedProject as string;
+    int selectedSection = ViewBag.SelectedSection;
+    List<int> ALLSections = ViewBag.AllSections as List<int>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 p-1">
+            <h2>Projects</h2>
+            <p>(There are <b>@TempData["projectcount"]</b> projects) </p>
+            
+            @foreach (var p in Model.ProjectSettings)
+            { 
+                <form asp-action="SubmitToStudents" asp-controller="AppAutoSect" method="post">
+                    <input class="form-control" name="ProjectName" hidden value="@p.ProjectName" />
+                    <input class="form-control" name="ProjectId" hidden value="@p.ProjectId" />
+                    <button  type="submit" class="ProjectsButtons btn btn-outline-primary my-1 form-control 
+                    @(p.ProjectName == selectedProject ? "active" : string.Empty)">
+                    @p.ProjectName
+                    </button>
+                </form>
+            }
+            
+        </div>
+        <div class="col-md-10 mt-2">
+            <form method="post" asp-action="AnalyzeProject" asp-controller="AppAutoSect" id="AnalyzeForm">
+           <div class="row">
+
+                <h3>Settings</h3>
+                    @if (TempData["TargetSectionErrMsg"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @TempData["TargetSectionErrMsg"]
+                        </div>
+                    }
+                <div class="col-md-2 mt-1 me-1">
+                    <label class="form-label d-inline">Number of Sections:</label>
+                    <input id="NumberOfSection" class="form-control" name="TotalSection" type="number" min="1" value="@TempData["studentpersection"]" />
+                </div>
+                <div class="col-md-2 mt-1 me-1">
+                    <label class="form-label d-inline">Students per Section:</label>
+                    <input class="form-control" type="text" value="@TempData["totalstudentpersection"]" disabled/>
+                </div>
+                <div class="col-md-2 mt-1 me-1">
+                    <label class="form-label d-inline">Males per Section:</label>
+                    <input class="form-control" type="text" value="@TempData["malepersection"]" disabled/>
+                </div>
+                <div class="col-md-2 mt-1 me-1">
+                    <label class="form-label d-inline">Females per Section:</label>
+                    <input class="form-control" type="text" value="@TempData["femalepersection"]" disabled />
+                </div>
+                <div class="col-md-3 m-1">
+                    <input class="form-control" name="FromDashboardOrStudent" type="text" value="students" hidden />
+                        <button id="AnalyzeAndSave" class="btn btn-primary form-control mt-4"><i class="bi bi-bar-chart-line-fill"> </i>Analyze and Save</button>
+                </div>
+
+                </div>
+            </form>
+           <div class="row my-1">
+               <h4>Summary:</h4>
+                <div class="card text-bg-primary mb-3 col-md-2 mx-1">
+                    <div class="card-header fw-bold text-center"><i class="bi bi-gender-male"> </i>MALE</div>
+                    <div class="card-body text-center">
+                        <h1><span class="badge bg-dark">@TempData["malecount"]</span></h1>
+                        <p class="card-text"><small>Total Male Enrollees</small></p>
+                    </div>
+                </div>
+                <div class="card text-bg-danger mb-3 col-md-2 mx-1">
+                    <div class="card-header fw-bold text-center"><i class="bi bi-gender-female"> </i>FEMALE</div>
+                    <div class="card-body text-center">
+                        <h1><span class="badge bg-dark">@TempData["femalecount"]</span></h1>
+                        <p class="card-text"><small>Total Female Enrollees</small></p>
+                    </div>
+                </div>
+                <div class="card text-bg-info mb-3 col-md-2 mx-1">
+                    <div class="card-header fw-bold text-center"><i class="bi bi-gender-male"> </i>MALE</div>
+                    <div class="card-body text-center">
+                        <h1><span class="badge bg-dark">@TempData["maleperselectedsection"]</span></h1>
+                        <p class="card-text"><small>Total Male in Section</small></p>
+                    </div>
+                </div>
+                <div class="card text-bg-warning mb-3 col-md-2 mx-1">
+                    <div class="card-header fw-bold text-center"><i class="bi bi-gender-female"> </i>FEMALE</div>
+                    <div class="card-body text-center">
+                        <h1><span class="badge bg-dark">@TempData["femaleperselectedsection"]</span></h1>
+                        <p class="card-text"><small>Total Female in Section</small></p>
+                    </div>
+                </div>
+                <div class="card text-bg-secondary mb-3 col-md-2 mx-1">
+                    <div class="card-header fw-bold text-center"><i class="bi bi-person-circle"> </i>TOTAL</div>
+                    <div class="card-body text-center">
+                        <h1><span class="badge bg-dark">@TempData["totalperselectedsection"]</span></h1>
+                        <p class="card-text"><small>Total Students in Section</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row my-2">
+                
+               <div class="col-md-4">
+                    <form asp-action="AutomateSectioningRandomly" asp-controller="AppAutoSect" id="AutomateRandomlyForm" method="post" class="form-inline">
+                   <button id="AutomateRandom" type="submit" class="btn btn-primary btn-lg form-control">
+                            <span class="spinner-border spinner-border-sm" style="display: none;" id="AutomateSpinner" aria-hidden="true"></span>
+                            <i class="bi bi-shuffle"> </i>Run Sectioning Randomly
+                        </button>
+                    </form>
+               </div>
+                <div class="col-md-5">
+                    <form asp-action="AutomateSectioningByGrades" asp-controller="AppAutoSect" id="AutomateByGradeForm" method="post" class="form-inline">
+                        <button id="AutomateGrades" type="submit" class="btn btn-primary btn-lg form-control">
+                            <span class="spinner-border spinner-border-sm" style="display: none;" id="AutomateSpinner" aria-hidden="true"></span>
+                            <i class="bi bi-mortarboard-fill"> </i>Run Sectioning Based on Grades
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+               @* 
+                <div class="col-md-9 my-3">
+                    <div class="progress">
+                        <div id="AutomateProgress" class="progress-bar" role="progressbar" aria-label="Example with label" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                </div> *@
+
+            
+           <div class="row my-3">
+               <div class="col-md-10">
+                    <h4 class="d-inline">Students</h4><p class="d-inline"> (@selectedProject Project) <span class="badge @((string)TempData["iscompleted"] == "Complete" ? "bg-success" : "bg-warning")">Status: @TempData["iscompleted"] | Method: @TempData["methodused"]</span></p>
+               </div>
+           </div>
+            <div class="row mt-3">
+                @* <div class="col-md-2 mx-1 my-1">
+                    <label class="form-label d-inline">Sort by:</label>
+                    <form asp-action="SubmitFromSelectName" asp-controller="AppAutoSect" method="post">
+                    <select id="FirstLastSelect" name="SelectedName" class="form-select form-select-sm" aria-label="Default select example" onchange="this.form.submit()">
+                        <option value="LastName" selected>Last Name</option>
+                        <option value="FirstName">First Name</option>
+                    </select>
+                    </form>
+                </div> *@
+                <div class="col-md-2 mx-1 my-1">
+                    <label class="form-label d-inline">Filter by Section:</label>
+                    <form asp-action="SubmitFromSelectSection" asp-controller="AppAutoSect"  method="post">
+                    <select id="SectionSelect" name="SelectedSection" class="form-select form-select-sm" aria-label="Default select example" onchange="this.form.submit()">
+                        <option value="100" selected>All Sections</option>
+                            @foreach (var s in ALLSections)
+                        {
+                          <!option name="SectionValue" value="@s" @(s == selectedSection ? "selected" : string.Empty)>@s</!option>
+                        }                    
+                    </select>
+                    </form>
+                </div>
+                <div class="col-md-2 mx-1 my-1">
+                    <label class="form-label d-inline">Search by:</label>
+                    <select id="SearchParameter" class="form-select form-select-sm" aria-label="Default select example">
+                        <option selected disabled >Click to Choose</option>
+                        <option value="id">Student Id</option>
+                        <option value="firstName">First Name</option>
+                        <option value="lastName">Last Name</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mx-1 my-1">
+                    <label class="form-label d-inline">Search:</label>
+                    <div class="input-group input-group-sm mb-3">
+                        <input id="SearchQuery" type="text" class="form-control" placeholder="Type and Search" aria-label="Type Here" aria-describedby="button-search">
+                        <button class="btn btn-primary" type="button" id="button-search">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <form asp-action="ExportStudentsProject" asp-controller="AppAutoSect" id="DownloadProjectForm" method="get">
+                    @* <a type="submit" href="downloadandclose" class="btn btn-primary float-end" target="_blank">Download Project as Excel</a> *@
+
+                    <button id="DownloadProject" type="submit" class="btn btn-primary float-end">
+                            <i class="bi bi-file-earmark-arrow-down"> </i>Download Project as Excel
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <table id="StudentsTable" class="table table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">#ID</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Middle Name</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">GWA</th>
+                        @* <th scope="col">Project</th> *@
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var s in Model.Students)
+                        {
+                        <tr>
+                            <th scope="row">@s.StudentId</th>
+                            <td>@s.LastName</td>
+                            <td>@s.FirstName</td>
+                            <td>@s.MiddleName</td>
+                            <td>@s.Gender</td>
+                            <td>@s.Section</td>
+                            <td>@s.GWA</td>
+                            @* <td>@s.Project.ProjectName</td> *@
+                        </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#AutomateRandom").click(function () {
+                // Disable the button
+                $(this).prop("disabled", true);
+                $('#DownloadProject').prop("disabled", true);
+                $('#AutomateGrades').prop("disabled", true);
+                $('#AnalyzeAndSave').prop("disabled", true);
+                $('.ProjectsButtons').prop("disabled", true);
+                $('#button-search').prop("disabled", true);
+                $('#NumberOfSection').prop("disabled", true);
+                $('#SectionSelect').prop("disabled", true);
+                $('#SearchInput').prop("disabled", true);
+
+                // Change the button text
+                var originalText = $(this).html(); // Store the original text
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Random Sectioning...');
+
+                $("#AutomateRandomlyForm").submit();
+            });
+
+            $("#AutomateGrades").click(function () {
+                // Disable the button
+                $(this).prop("disabled", true);
+                $('#DownloadProject').prop("disabled", true);
+                $('#AutomateRandom').prop("disabled", true);
+                $('#AnalyzeAndSave').prop("disabled", true);
+                $('.ProjectsButtons').prop("disabled", true);
+                $('#button-search').prop("disabled", true);
+                $('#NumberOfSection').prop("disabled", true);
+                $('#SectionSelect').prop("disabled", true);
+                $('#SearchInput').prop("disabled", true);
+
+                // Change the button text
+                var originalText = $(this).html(); // Store the original text
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Sectionig By Grades...');
+
+                $("#AutomateByGradeForm").submit();
+            });
+
+            $("#DownloadProject").click(function () {
+
+                // Change the button text
+                var originalText = $(this).html(); // Store the original text
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downloading Project...');
+
+                $("#DownloadProjectForm").submit();
+
+                setTimeout(function () {
+                    // Restore original state
+                    $("#DownloadProject").html(originalText);
+                    $("#DownloadProject").prop("disabled", false);
+                    $("body").css("cursor", "default"); // Reset cursor
+                }, 5000); // 2 seconds delay
+            });
+
+            $('#button-search').click(function () {
+                //Gather input Values
+                var parameter = $('#SearchParameter').val();
+                var query = $('#SearchQuery').val();
+
+                //AJAX request
+                $.ajax({
+                    url: '/api/Students',
+                    type: 'GET',
+                    data: {
+                        parameter: parameter,
+                        query: query
+                    },
+                    success: function (response) {
+                        //Clear the table before adding new data
+                        $('#StudentsTable tbody').empty(); 
+
+                        //Check if data exists
+                        if (response && response.length > 0) {
+
+                            //Iterate over response data and append to table
+                            $.each(response, function (index, user) {
+                                var row = '<tr>' +
+                                    '<td>' + user.studentId + '</td>' +
+                                    '<td>' + user.lastName + '</td>' +
+                                    '<td>' + user.firstName + '</td>' +
+                                    '<td>' + user.middleName + '</td>' +
+                                    '<td>' + user.gender + '</td>' +
+                                    '<td>' + user.section + '</td>' +
+                                    '<td>' + user.gwa + '</td>' +
+                                    '</tr>';
+
+                                $('#StudentsTable tbody').append(row);
+                            });
+                        } else{
+                            var noResultsRow = '<tr><td colspan="7">No result found</td></tr>';
+                            $('#StudentsTable tbody').append(noResultsRow);
+                        }
+
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+
+            });
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        // function updateProgressBar() {
+        //     $.get('@Url.Action("GetProgressInAutomation")', function (progress) {
+
+        //         $('#AutomateProgress').css('width', progress + '%').attr('aria-valuenow', progress).text(progress + '%');
+
+        //         $("#AutomateRun").prop("disabled", true);
+
+        //         if (progress < 100) {
+        //             setTimeout(updateProgressBar, 1000); Poll every second
+        //         }
+        //     });
+            
+        // }
+
+        // $(document).ready(function () {
+        //     $('#AutomateRun').click(function () {
+        //         updateProgressBar();
+        //     });
+        // });
+    </script>
+}

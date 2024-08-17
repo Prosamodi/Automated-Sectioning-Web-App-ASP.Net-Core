@@ -1,0 +1,8 @@
+﻿
+#createspinner {
+    visibility: hidden !important;
+}
+
+body.busy .spinner {
+    visibility: visible !important;
+}

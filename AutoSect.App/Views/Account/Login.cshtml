@@ -1,0 +1,36 @@
+﻿@model LoginModel
+@{
+    Layout = "_Layout";
+}
+<div class="d-flex align-items-center justify-content-center ">
+    <div class="card m-5 p-5 h-100 w-50 ">
+        <h4 class="text-center"><i class="bi bi-box-arrow-in-left">  </i>Login Now</h4>
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <form asp-action="Login" asp-controller="Account" method="post">
+            @Html.AntiForgeryToken()
+            @* <input type="hidden" asp-for="ReturnUrl" /> *@
+            <div class="form-group">
+                <label asp-for="Name" class="form-label">Username:</label>
+                <span asp-validation-for="Name" class="d-block text-danger"></span>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="form-label">Password:</label>
+                <span asp-validation-for="Password" class="d-block text-danger"></span>
+                <input asp-for="Password" type="password"
+                       class="form-control" />
+            </div>
+           
+                <button class="btn btn-primary mt-2" type="submit">
+                    Log In
+                </button>
+                <a asp-action="SignUp" asp-controller="Account" class="float-end mt-3 link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><b>Sign Up Now</b></a>
+
+        </form>
+
+        <h4 class="text-center pt-4"><i class="bi bi-box-arrow-in-left">  </i>Login With</h4>
+        <a asp-action="GoogleSignIn" asp-controller="Account" class="btn btn-lg form-control mb-3" style="background-color:#f2a60c;color:white;">
+            <i class="bi bi-envelope-arrow-down-fill"></i> Gmail
+        </a>
+    </div>
+ </div>

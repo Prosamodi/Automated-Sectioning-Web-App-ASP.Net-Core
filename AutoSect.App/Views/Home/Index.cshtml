@@ -1,0 +1,59 @@
+﻿@model LoginModel
+
+@{
+    Layout = "_Layout";
+}
+
+<section>
+    <div class="container-fluid">
+        <div class="row text-center pt-5">
+            <h1>Welcome to <em><b>AutoSect&trade;</b></em> the free WebApp for automation of class sectioning. Your number <b>ONE</b> app every Enrollment!</h1>
+            <h5 class="mt-5">How to start? Download our excel file here <a href="home/DownloadAutoSectExcel"><em>AutoSectExcel.xlsx.</em></a> Follow the format accordingly. Signup now or login using your Gmail Account to use the App!</h5>
+        </div>
+        <div class="row pt-5">
+            <div class="col-md-6">
+                <div class="card mb-1">
+                    <div class="text-danger" asp-validation-summary="All"></div>
+                    <div class="card-body">
+                    <h4 class="text-center"><i class="bi bi-box-arrow-in-left">  </i>Login Now</h4>
+                        <form asp-action="Login" asp-controller="Account" method="post">
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="Name">Username:</label>
+                                <span asp-validation-for="Name" class="d-block text-danger"></span>
+                                <input type="text" asp-for="Name" class="form-control" >
+                            </div>
+                            <div class="mb-3">
+                                <p id="userStatus" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label">Password:</label>
+                                <span asp-validation-for="Password" class="d-block text-danger"></span>
+                                <input  asp-for="Password" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary mt-2" type="submit">
+                                    Login
+                                </button>
+                                @* <a href="#" class="fs-6 link-underline" style="margin-left:5px;"><b>Forget Password?</b></a> *@
+                                <a asp-action="SignUp" asp-controller="Account" class="float-end mt-3 link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><b>Sign Up Now</b></a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="col-md-6 mt-1">
+                <div class="card mb-1">
+                    <div class="card-body">
+                        <h4 class="text-center mb-3"><i class="bi bi-box-arrow-in-left">  </i>Login With</h4>
+                         <a asp-action="GoogleSignIn" asp-controller="Account" class="btn btn-lg form-control mb-3" style="background-color:#f2a60c;color:white;">
+                            <i class="bi bi-envelope-arrow-down-fill"></i> Gmail</a>
+                        @* <a href="#" class="btn btn-lg form-control mb-3" style="background-color:#316FF6;color:white;"><i class="bi bi-facebook"></i> Facebook</a>
+                        <a href="#" class="btn btn-lg form-control mb-3" style="background-color:#1DA1F2;color:white;"><i class="bi bi-envelope-at-fill"></i> Outlook</a> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

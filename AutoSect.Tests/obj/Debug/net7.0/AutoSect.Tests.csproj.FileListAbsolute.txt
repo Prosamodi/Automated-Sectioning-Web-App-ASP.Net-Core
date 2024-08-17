@@ -1,0 +1,6 @@
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\bin\Debug\net7.0\CoverletSourceRootsMapping
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\obj\Debug\net7.0\AutoSect.Tests.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\obj\Debug\net7.0\AutoSect.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\obj\Debug\net7.0\AutoSect.Tests.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\obj\Debug\net7.0\AutoSect.Tests.AssemblyInfo.cs
+C:\Users\user\Desktop\New Core Project\AutoSectioning\AutoSect.Tests\obj\Debug\net7.0\AutoSect.Tests.csproj.CoreCompileInputs.cache
