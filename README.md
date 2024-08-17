@@ -22,3 +22,15 @@ An Excel file with student data.<br/>
 
 **Contact**<br/>
 For any questions or support, please contact [pro.odisammyv@gmail.com].
+
+**Application UI - Using Bootstrap 5**
+<br/>
+![Home](https://github.com/user-attachments/assets/a9d78f95-f0e1-4e7e-b6ba-93304dee0f15)
+
+![appHome](https://github.com/user-attachments/assets/39634555-b45a-4004-9b1f-cc41633cb9b6)
+
+![Dashboard 1](https://github.com/user-attachments/assets/8fae24a6-9a6a-4c7f-9f8e-04f06762d066)
+
+![Randomized](https://github.com/user-attachments/assets/640ecefe-e837-4b4c-bfd5-55bae9ce5c4d)
+
+![ByGrades](https://github.com/user-attachments/assets/db28850b-f22b-4a61-9138-7eafbeed2347)
